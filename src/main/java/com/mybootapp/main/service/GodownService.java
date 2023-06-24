@@ -1,5 +1,6 @@
 package com.mybootapp.main.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,15 @@ public class GodownService {
 			return null; 
 		}
 		return optional.get();
+	}
+
+	public List<Godown> getAllGodowns() {
+		return goDownRepository.findAll();
+	}
+
+	public void delete(Godown godown) {
+		// TODO Auto-generated method stub
+		goDownRepository.delete(godown);
 	}
 
 }
