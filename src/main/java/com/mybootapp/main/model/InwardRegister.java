@@ -8,32 +8,31 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 @Entity
-public class InwardRegister { 
-	//select InwardRegister obj (row of DB) :condition(productID,quantity)  
+public class InwardRegister {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-	
-	@ManyToOne
-	private Product product; 
-	
-	@ManyToOne
-	private Godown godown; 
-	
-	@OneToOne
-	private Supplier supplier; 
-	
-	private int quantity; 
-	
-	private String invoiceNumber; 
-	
-	private String recieptNo;
 
-	private LocalDate dateOfSupply; 
-	 
+	@ManyToOne
+	private Product product;
+
+	@ManyToOne
+	private Godown godown;
+
+	@OneToOne
+	private Supplier supplier;
+
+	private int quantity;
+
+	private String invoiceNumber;
+
+	private String receiptNo;
+
+	private LocalDate dateOfSupply;
+
 	public int getId() {
 		return id;
 	}
@@ -82,12 +81,12 @@ public class InwardRegister {
 		this.invoiceNumber = invoiceNumber;
 	}
 
-	public String getRecieptNo() {
-		return recieptNo;
+	public String getReceiptNo() {
+		return receiptNo;
 	}
 
-	public void setRecieptNo(String recieptNo) {
-		this.recieptNo = recieptNo;
+	public void setReceiptNo(String receiptNo) {
+		this.receiptNo = receiptNo;
 	}
 
 	public LocalDate getDateOfSupply() {
@@ -96,7 +95,6 @@ public class InwardRegister {
 
 	public void setDateOfSupply(LocalDate dateOfSupply) {
 		this.dateOfSupply = dateOfSupply;
-	} 
-	
-	
+	}
+
 }

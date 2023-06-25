@@ -10,18 +10,19 @@ import javax.persistence.ManyToOne;
 
 @Entity
 public class CustomerProduct {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-	
+
 	@ManyToOne
-	private Customer customer; 
-	
+	private Customer customer;
+
 	@ManyToOne
-	private Product product; 
-	
-	private int quantityPuchased;
-	
+	private Product product;
+
+	private int quantityPurchased;
+
 	private LocalDate dateOfPurchase;
 
 	public int getId() {
@@ -48,12 +49,12 @@ public class CustomerProduct {
 		this.product = product;
 	}
 
-	public int getQuantityPuchased() {
-		return quantityPuchased;
+	public int getQuantityPurchased() {
+		return quantityPurchased;
 	}
 
-	public void setQuantityPuchased(int quantityPuchased) {
-		this.quantityPuchased = quantityPuchased;
+	public void setQuantityPurchased(int quantityPuchased) {
+		this.quantityPurchased = quantityPuchased;
 	}
 
 	public LocalDate getDateOfPurchase() {
@@ -62,7 +63,6 @@ public class CustomerProduct {
 
 	public void setDateOfPurchase(LocalDate dateOfPurchase) {
 		this.dateOfPurchase = dateOfPurchase;
-	} 
-	
-	
+	}
+
 }

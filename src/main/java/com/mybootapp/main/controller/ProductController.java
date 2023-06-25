@@ -16,138 +16,65 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mybootapp.main.exception.ResourceNotFoundException;
 import com.mybootapp.main.model.Product;
-import com.mybootapp.main.model.Vendor;
 import com.mybootapp.main.service.ProductService;
-import com.mybootapp.main.service.VendorService;
 
 @RestController
 @RequestMapping("/product")
 public class ProductController {
-
-	@Autowired
-	private ProductService productService; //injecting Service in Controller : DI(Dependency Injection)
 	
 	@Autowired
-	private VendorService vendorService; 
+	private ProductService productService;
 	
-	@GetMapping("/hello")
-	public String sayHello() {
-		return "Hello Spring!!";
-	}
-	
-	/* 
-	 PATH: /product/add
+	/*
+	 PATH: /add
 	 Method: POST
 	 RequestBody: Product product
-	 response: product 
-	 PathVariable: none
-	 */
-//	@PostMapping("/add")
-//	public ResponseEntity<?> postProduct(
-//							   @RequestBody Product product) {
-//		product = productService.insert(product);
-//		return  ResponseEntity.status(HttpStatus.OK)
-//				.body(product);
-//	}
-	
-	@PostMapping("/add")
-	public ResponseEntity<?> postProduct(@RequestBody Product product){
-		product=productService.insert(product);
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(product);
-	}
-	
-	/* 
-	 PATH: /product/all
-	 Method: GET
-	 RequestBody: None
-	 response: List<Product> 
+	 Response: product
 	 PathVariable: None
 	 */
+	@PostMapping("/add")
+	public Product postProduct(@RequestBody Product product) {
+		product = productService.insert(product);
+		return product;
+	}
+	
 	@GetMapping("/all")
-	public List<Product> getAllProducts() {
-		List<Product> list =  productService.getAllProduct();
-		return list; 
+	public List<Product> getAll() {
+		return productService.getAll();
 	}
 	
-	
-	/* 
-	 PATH: /product/one
-	 Method: GET
-	 RequestBody: None
-	 response: Product 
-	 PathVariable: ID
-	 */
-	@GetMapping("/one/{id}") //this id is called as path variable
-	public ResponseEntity<?> getProduct(@PathVariable("id") int id) {
-		Product product  = productService.getproduct(id);
-		if(product == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("Invalid ID given");
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(product); 
-	}
-	//Not a professional way 
-	@GetMapping("/one/alternate/{id}")
-	public Object getProductAlternate(@PathVariable("id") int id) {
+	@GetMapping("/one/{id}")
+	public ResponseEntity<?> getOne(@PathVariable int id) {
 		try {
-			Product product  = productService.getproductAlternate(id);
-			return product; 
+			return ResponseEntity.status(HttpStatus.OK).body(productService.getById(id));
 		} catch (ResourceNotFoundException e) {
-			 return e.getMessage();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 	}
 	
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> updateProduct(@PathVariable("id") int id, @RequestBody Product newProduct) {
-		//Step 0 : validation for request body: newProduct
-		if(newProduct.getTitle() == null || !newProduct.getTitle().trim().matches("[a-zA-Z0-9- *]+"))
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("Title has to have valid format [a-zA-Z0-9- ]");
-		
-		if(newProduct.getDescription() == null || newProduct.getDescription().equals(""))
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("Description cannot be nullor blank");
-		
-		if(newProduct.getPrice() == 0)
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("Price must have a value other than 0");
-		
-		//Step 1: Validate the id given 
-		Product oldProduct  = productService.getproduct(id);
-		if(oldProduct == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("Invalid ID given");
+	public ResponseEntity<?> update(@PathVariable int id, @RequestBody Product product) {
+		try {
+			productService.getById(id);
+		} catch (ResourceNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
-		/* 2 techniques {old has id whereas new does not have id}
-		 * 1. Transfer new values to old(that has id)
-		 * 2. Transfer id from old to new.  
-		 */
-		newProduct.setId(oldProduct.getId());
-	    newProduct = productService.insert(newProduct);
-	    return ResponseEntity.status(HttpStatus.OK)
-				.body(newProduct);
+		
+		product.setId(id);
+		return ResponseEntity.status(HttpStatus.OK).body(productService.insert(product));
 	}
 	
 	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<?> deleteProduct(@PathVariable("id") int id) {
-		//Step 1: validate id
-		Product product  = productService.getproduct(id);
-		if(product == null) {
+	public ResponseEntity<?> delete(@PathVariable int id) {
+		try {
+			productService.getById(id);
+		} catch (ResourceNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("Invalid ID given");
+					.body(e.getMessage());
 		}
 		
-		productService.deleteProduct(product);
-		
-		return ResponseEntity.status(HttpStatus.OK)
-				.body("Product deleted..");
-
+		productService.delete(id);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
+	
 }
-
-
-
-
-
-

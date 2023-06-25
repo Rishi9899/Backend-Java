@@ -14,56 +14,59 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mybootapp.main.exception.ResourceNotFoundException;
 import com.mybootapp.main.model.Supplier;
 import com.mybootapp.main.service.SupplierService;
 
 @RestController
 @RequestMapping("/supplier")
 public class SupplierController {
+	
+	@Autowired
+	private SupplierService supplierService;
 
-    @Autowired
-    private SupplierService supplierService;
-
-    @PostMapping("/add")
-    public Supplier postSupplier(@RequestBody Supplier supplier) {
-        return supplierService.insert(supplier);
-    }
-
-    @GetMapping("/getAll")
-    public List<Supplier> getAllSuppliers() {
-        return supplierService.getAllSuppliers();
-    }
-
-    @GetMapping("/getOne/{supplierId}")
-    public ResponseEntity<?> getSupplierById(@PathVariable("supplierId") int supplierId) {
-        Supplier supplier = supplierService.getSupplierById(supplierId);
-        if (supplier == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Supplier not found");
-        return ResponseEntity.ok(supplier);
-    }
-
-    @DeleteMapping("/delete/{supplierId}")
-    public ResponseEntity<String> deleteSupplier(@PathVariable("supplierId") int supplierId) {
-        Supplier supplier = supplierService.getSupplierById(supplierId);
-        if (supplier == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Supplier not found");
-        supplierService.delete(supplier);
-        return ResponseEntity.ok("Supplier deleted successfully");
-    }
-
-    @PutMapping("/update/{supplierId}")
-    public ResponseEntity<?> updateSupplier(@PathVariable("supplierId") int supplierId, @RequestBody Supplier updatedSupplier) {
-        Supplier supplier = supplierService.getSupplierById(supplierId);
-        if (supplier == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Supplier not found");
-
-        /* Update supplier details */
-        supplier.setName(updatedSupplier.getName());
-        supplier.setCity(updatedSupplier.getCity());
-
-        /* Save updated supplier */
-        supplier = supplierService.insert(supplier);
-
-        return ResponseEntity.status(HttpStatus.OK).body(supplier);
-    }
+	@PostMapping("/add")
+	public Supplier postSupplier(@RequestBody Supplier supplier) {
+		return supplierService.insert(supplier);
+	}
+	
+	@GetMapping("/all")
+	public List<Supplier> getAll() {
+		return supplierService.getAll();
+	}
+	
+	@GetMapping("/one/{id}")
+	public ResponseEntity<?> getOne(@PathVariable int id) {
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(supplierService.getById(id));
+		} catch (ResourceNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
+	}
+	
+	@PutMapping("/update/{id}")
+	public ResponseEntity<?> update(@PathVariable int id, @RequestBody Supplier supplier) {
+		try {
+			supplierService.getById(id);
+		} catch (ResourceNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
+		
+		supplier.setId(id);
+		return ResponseEntity.status(HttpStatus.OK).body(supplierService.insert(supplier));
+	}
+	
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<?> delete(@PathVariable int id) {
+		try {
+			supplierService.getById(id);
+		} catch (ResourceNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(e.getMessage());
+		}
+		
+		supplierService.delete(id);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+	
 }

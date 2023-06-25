@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mybootapp.main.model.Product;
+import com.mybootapp.main.exception.ResourceNotFoundException;
 import com.mybootapp.main.model.Supplier;
 import com.mybootapp.main.repository.SupplierRepository;
 
@@ -14,38 +14,28 @@ import com.mybootapp.main.repository.SupplierRepository;
 public class SupplierService {
 
 	@Autowired
-	private SupplierRepository supplierRepository; 
-	
+	private SupplierRepository supplierRepository;
+
 	public Supplier insert(Supplier supplier) {
 		return supplierRepository.save(supplier);
 	}
-
-	public Supplier getById(int supplierId) {
-		Optional<Supplier> optional= supplierRepository.findById(supplierId);
-		if(!optional.isPresent()) {
-			return null; 
-		}
-		return optional.get();	}
-
-	public List<Supplier> getAllSuppliers() {
+	
+	public List<Supplier> getAll() {
 		return supplierRepository.findAll();
 	}
 
-	public Supplier getSupplierById(int supplierId) {
-
-
-		Optional<Supplier> optional= 
-				supplierRepository.
-				findById(supplierId);
-		if(!optional.isPresent()) {
-			return null; 
+	public Supplier getById(int id) throws ResourceNotFoundException {
+		Optional<Supplier> optional = supplierRepository.findById(id);
+		
+		if (optional.isEmpty()) {
+			throw new ResourceNotFoundException("Invalid ID given");
 		}
+		
 		return optional.get();
 	}
-
-	public void delete(Supplier supplier) {
-		// TODO Auto-generated method stub
-		supplierRepository.delete(supplier);
+	
+	public void delete(int id) {
+		supplierRepository.deleteById(id);
 	}
 
 }
