@@ -5,12 +5,11 @@ import java.time.LocalDate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class InwardRegisterDto {
+public class InwardRegisterBySupplierDto {
 	
 	private String productTitle;
 	private int productQuantity;
-	private String godownLocation;
-	private String godownManager;
+	private double productPrice;
 	private String supplierName;
 	private String supplierCity;
 	private int quantity;
@@ -29,18 +28,6 @@ public class InwardRegisterDto {
 	}
 	public void setProductQuantity(int productQuantity) {
 		this.productQuantity = productQuantity;
-	}
-	public String getGodownLocation() {
-		return godownLocation;
-	}
-	public void setGodownLocation(String godownLocation) {
-		this.godownLocation = godownLocation;
-	}
-	public String getGodownManager() {
-		return godownManager;
-	}
-	public void setGodownManager(String godownManager) {
-		this.godownManager = godownManager;
 	}
 	public String getSupplierName() {
 		return supplierName;
@@ -77,6 +64,12 @@ public class InwardRegisterDto {
 	}
 	public void setDateOfSupply(LocalDate dateOfSupply) {
 		this.dateOfSupply = dateOfSupply;
+	}
+	public double getProductPrice() {
+		return productPrice;
+	}
+	public void setProductPrice(double productPrice) {
+		this.productPrice = productPrice;
 	}
 	
 }
